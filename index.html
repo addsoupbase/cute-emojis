@@ -7,20 +7,5 @@
 </head>
 <body>
     <script src="https://addsoupbase.github.io/favourites/utils.js"></script>
-    <script>
-        ;!async function(){
-            let emojis = new Set(JSON.parse(await (await fetch('./emojis.txt')).text()))
-
-            emojis.forEach(o=>{
-            new Elem({tag:'img', src:o,parent:body,styles:{width:'10%',height:'10%'}, events:{
-                error(){
-                        this.src = this.src.replace('.gif','.webp')
-                    this.content.noevent('error')
-                }
-            }})
-        })
-        }()
-             
-    </script>
-</body>
+    <script>(async e=>{new Set(JSON.parse(await(await fetch`./emojis.txt`).text())).forEach(src=>{new Elem({tag:'img',src,parent:body,styles:{width:'10%',height:'10%'}})})})()</script></body>
 </html>
