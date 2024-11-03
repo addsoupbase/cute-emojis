@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EMOJI OVERLOAD</title>
 </head>
-<body>
+<body style="background-color: grey;">
     <script src="https://addsoupbase.github.io/favourites/utils.js"></script>
     <script>(async e=>{new Set(JSON.parse(await(await fetch`./emojis.txt`).text())).forEach(src=>{new Elem({tag:'img',src,parent:body,styles:{width:'10%',height:'10%'}})})})()</script></body>
 </html>
