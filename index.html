@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EMOJI OVERLOAD</title>
+    <style>img{width:10%;height:10%}</style>
 </head>
+
 <body style="background-color: grey;">
     <script src="https://addsoupbase.github.io/favourites/utils.js"></script>
-    <script>(async e=>{
-body.children = (await(await fetch('./emojis.txt')).json()).map(src=>
-            new Elem({tag:'img',src,parent:body,styles:{width:'10%',height:'10%'}})
-            )})()</script></body>
+    <script type="module">
+        import data from'./emojis.js'
+        body.children = data.map(map)
+        function map(src) {
+            return $({tag:'img',src})
+        }
+    </script>
+</body>
+
 </html>
