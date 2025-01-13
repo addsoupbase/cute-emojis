@@ -5,17 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EMOJI OVERLOAD</title>
-    <style>img{width:100px;height:100px}</style>
+    <style>
+    button{border:none; background-color: rgb(102, 217, 102);border-radius: 5px;}
+    button:hover {
+        background-color: rgb(90, 187, 90);
+    }
+    img{width:100px;height:100px;image-rendering: pixelated;}</style>
 </head>
 
 <body style="background-color: grey;">
-    <script src="https://addsoupbase.github.io/favourites/utils.js"></script>
     <script type="module">
         import data from'./emojis.js'
-        body.children = data.map(map)
-        function map(src) {
-            return $({tag:'img',src})
+        import $,{getProxy} from '../addsoupbase.github.io/quick.js'
+        getProxy(document.body).offsprings = data.map(map)
+        function map(src,index) {
+            return $('img', {src,title:`Emoji ${index+1}`})
         }
+      /*  $('button', {
+            parent:document.body,
+            txt:'Download All'
+        })*/
     </script>
 </body>
 
