@@ -15,11 +15,11 @@
 
 <body style="background-color: grey;">
     <script type="module">
-        import data from'./emojis.js'
+        let data = await(await fetch('./emojis.json')).json()
         import $,{getProxy} from 'https://addsoupbase.github.io/quick.js'
         getProxy(document.body).offsprings = data.map(map)
         function map(src,index) {
-            return $('img', {src,title:`Emoji ${index+1}`})
+            return $('img', {src:`./emojis/${src}`,title:`Emoji ${index+1}`})
         }
       /*  $('button', {
             parent:document.body,
