@@ -42,10 +42,11 @@
         container.batch(...data.map(map))
         function map(src, index) {
             src = `./emojis/${src}`
-            const attr = { src, alt: `#${index + 1}`, title: `Emoji ${index + 1}` }
+            const attr = { src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`,}
             fetch(src).then(o => o.blob().then(o => blobs.add([o, src.split('/').at(-1)])))
-            return $('img', { attr })
+            return $('img', {attr})
         }
+       
         $('button', {
             parent: document.body,
             txt: 'Download all',
