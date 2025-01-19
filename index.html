@@ -6,29 +6,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EMOJI OVERLOAD</title>
     <style>
-    button{border:none; background-color: rgb(102, 217, 102);border-radius: 5px;}
-    button:hover {
-        background-color: rgb(90, 187, 90);
-    }
-    body {
-        text-align: center;
-    }
-    img{width:90px;height:90px;image-rendering: pixelated;}</style>
+        button {
+            border: none;
+            background-color: rgb(102, 217, 102);
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: rgb(90, 187, 90);
+        }
+
+        body {
+            text-align: center;
+        }
+
+        img {
+            width: 90px;
+            height: 90px;
+            image-rendering: pixelated;
+        }
+    </style>
 </head>
 
 <body style="background-color: grey;">
-    <script type="module">
-        let data = await(await fetch('./emojis.json')).json()
-        import $,{getProxy} from 'https://addsoupbase.github.io/quick.js'
-        getProxy(document.body).offsprings = data.map(map)
-        function map(src,index) {
-            return $('img', {src:`./emojis/${src}`,title:`Emoji ${index+1}`})
+    <script type="importmap">
+        {
+
         }
-      /*  $('button', {
-            parent:document.body,
-            txt:'Download All'
-        })*/
     </script>
+    <script type="module">
+        let data = await (await fetch('./emojis.json')).json()
+        let blobs = new Set
+        import $ from '../addsoupbase.github.io/quick.js'
+        let container = $('div', document.body)
+        container.batch(...data.map(map))
+        function map(src, index) {
+            src = `./emojis/${src}`
+            const attr = { src, alt: `#${index + 1}`, title: `Emoji ${index + 1}` }
+            fetch(src).then(o => o.blob().then(o => blobs.add([o, src.split('/').at(-1)])))
+            return $('img', { attr })
+        }
+        $('button', {
+            parent: document.body,
+            txt: 'Download all',
+            events: { _click }
+        })
+        async function _click() {
+            this.fadeAndDestroy()
+            let zip = JSZip()
+            console.log("Downloading...")
+            blobs.forEach(([blob, name]) => {
+                zip.file(name, blob)
+            })
+            let final = URL.createObjectURL(await zip.generateAsync({ type: 'blob' }))
+            $('a', { attr: { href: final, download: 'emojis.zip' } }).click()
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
 </body>
 
 </html>
