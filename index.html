@@ -37,7 +37,7 @@
     <script type="module">
         let data = await (await fetch('./emojis.json')).json()
         let blobs = new Set
-        import $ from '../addsoupbase.github.io/quick.js'
+        import $ from 'https://addsoupbase.github.io/quick.js'
         let container = $('div', document.body)
         container.batch(...data.map(map))
         function map(src, index) {
