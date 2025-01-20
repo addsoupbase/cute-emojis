@@ -10,6 +10,7 @@
             border: none;
             background-color: rgb(102, 217, 102);
             border-radius: 5px;
+            margin: 5px
         }
 
         button:hover {
@@ -41,7 +42,7 @@
         $('h3',{txt:'I did not make these emojis',parent:document.body})
         $('button', {
             parent: document.body,
-            txt: 'Download all',
+            txt: `Download All (${data.length})`,
             events: { _click }
         })
         let container = $('div', document.body)
