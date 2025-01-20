@@ -39,6 +39,11 @@
         let blobs = new Set
         import $ from 'https://addsoupbase.github.io/quick.js'
         $('h3',{txt:'I did not make these emojis',parent:document.body})
+        $('button', {
+            parent: document.body,
+            txt: 'Download all',
+            events: { _click }
+        })
         let container = $('div', document.body)
         container.batch(...data.map(map))
         function map(src, index) {
@@ -48,11 +53,7 @@
             return $('img', {attr})
         }
        
-        $('button', {
-            parent: document.body,
-            txt: 'Download all',
-            events: { _click }
-        })
+       
         async function _click() {
             this.fadeAndDestroy()
             let zip = JSZip()
