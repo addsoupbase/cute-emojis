@@ -1,3 +1,8 @@
+/*
+
+deno run --allow-read --allow-write auto.js
+
+*/
 //Auto imports images
 let time = performance.now()
 try {
