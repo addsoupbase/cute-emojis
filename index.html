@@ -33,7 +33,7 @@
     <script type="module">
         let data = await (await fetch('./emojis.json')).json()
         let blobs = new Set
-        import $ from '../addsoupbase.github.io/yay.js'
+        import $ from 'https://addsoupbase.github.io/yay.js'
         $('h3', { txt: 'I did not make these emojis', parent: document.body })
         $('button', {
             parent: document.body,
