@@ -30,29 +30,26 @@
 </head>
 
 <body style="background-color: grey;">
-    <script
-        type="importmap">{"imports":{"misc":"https://addsoupbase.github.io/misc","quick":"https://addsoupbase.github.io/quick.js","math":"https://addsoupbase.github.io/math.js","handle":"https://addsoupbase.github.io/handle.js"}}</script>
-
     <script type="module">
         let data = await (await fetch('./emojis.json')).json()
         let blobs = new Set
-        import $ from 'quick'
+        import $ from '../addsoupbase.github.io/yay.js'
         $('h3', { txt: 'I did not make these emojis', parent: document.body })
         $('button', {
             parent: document.body,
-            txt: `Download All (${data.length})`,
+            textContent: `Download All (${data.length})`,
             events: { _click }
         })
-        let container = $('div', document.body)
-        container.batch(...data.map(map))
+        let container = $('div', {parent:document.body})
+        container.appendChild(...data.map(map))
         function map(src, index) {
             src = `./emojis/${src}`
             const attr = { src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`, }
             fetch(src).then(o => o.blob().then(o => blobs.add([o, src.split('/').at(-1)])))
-            return $('img', { attr })
+            return $(`<img src="${src}" alt="#${index+1}" title="Emoji ${index+1}">`,)
         }
 
-
+        window.$=$
         async function _click() {
             this.fadeAndDestroy()
             let zip = JSZip()
