@@ -41,7 +41,7 @@
             events: { _click }
         })
         let container = $('div', {parent:document.body})
-        container.appendChild(...data.map(map))
+        container.push(...data.map(map))
         function map(src, index) {
             src = `./emojis/${src}`
             const attr = { src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`, }
