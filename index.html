@@ -31,7 +31,8 @@
 
 <body style="background-color: grey;">
     <script type="module">
-        let data = await (await fetch('./emojis.json')).json()
+        import {getJson} from './arrays.js'
+        let data = await getJson('./emojis.json')
         let blobs = new Set
         import $ from 'https://addsoupbase.github.io/yay.js'
         $('h3', { txt: 'I did not make these emojis', parent: document.body })
