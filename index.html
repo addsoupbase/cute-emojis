@@ -34,7 +34,8 @@
 <body style="background-color: grey;">
 
     <script type="module">
-        import {getJson} from '../arrays.js'
+        import {getJson,} from '../arrays.js'
+        import {download} from '../handle.js'
         let data = await getJson('./emojis.json')
         let blobs = new Set
         import $ from '../yay.js'
@@ -55,14 +56,15 @@
 
         window.$=$
         async function _click() {
-            this.fadeAndDestroy()
+            this.setAttributes({disabled:true})
             let zip = JSZip()
             console.log("Downloading...")
             blobs.forEach(([blob, name]) => {
                 zip.file(name, blob)
             })
-            let final = URL.createObjectURL(await zip.generateAsync({ type: 'blob' }))
-            $('a', { attr: { href: final, download: 'emojis.zip' } }).click()
+            download(await zip.generateAsync({ type: 'blob' }))
+            this.setAttributes({disabled:false})
+
         }
     </script>
 
