@@ -34,10 +34,10 @@
 <body style="background-color: grey;">
 
     <script type="module">
-        import {getJson} from '../../addsoupbase.github.io/arrays.js'
+        import {getJson} from '../arrays.js'
         let data = await getJson('./emojis.json')
         let blobs = new Set
-        import $ from '../../addsoupbase.github.io/yay.js'
+        import $ from '../yay.js'
         $('h3', { txt: 'I did not make these emojis', parent: document.body })
         $('button', {
             parent: document.body,
