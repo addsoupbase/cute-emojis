@@ -36,7 +36,7 @@ function pixelStuff(image) {
         let g = pixeldata[i + 1]
         let b = pixeldata[i + 2]
         let a = pixeldata[i + 3]
-        if (!r && !g && !b && !a) continue
+        if (!a) continue
         let color = rgbToHex(r, g, b, a)
         let amount = parseInt(`${color}`.slice(1), 16)
         all.push(amount)
