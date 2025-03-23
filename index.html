@@ -10,7 +10,8 @@
             border: none;
             background-color: rgb(102, 217, 102);
             border-radius: 5px;
-            margin: 5px
+            margin: 20px;
+            transform: scale(1.3, 1.3)
         }
 
         button:hover {
@@ -19,51 +20,84 @@
 
         body {
             text-align: center;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
         }
 
         img {
             width: 90px;
             height: 90px;
-            image-rendering: pixelated;
+        }
+
+        label {
+            margin: 20px
+        }
+        select {
+            border-radius: 15px;
+    width: 120px;
+    height: 30px;
+    background-color: #1d8a7a;
+    border-color: #176b5e;
+    border-width: 2px;
+    border-style: solid;
+    text-align: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
     </style>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" async></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" async></script>
 </head>
 
 <body style="background-color: grey;">
-
+    <h1>I did <strong>not</strong> make these emojis</h1>
+    <aside>pls tell me if you find any duplicates</aside>
+    <label>
+        Image Rendering
+        <select id="imgrendering">
+            <option value="pixelated">Pixelated</option>
+            <option value="auto">Auto</option>
+            <!-- <option value="smooth">Smooth</option> -->
+            <!-- <option value="crisp-edges">Crisp Edges</option> -->
+        </select>
+    </label>
     <script type="module">
-        import {getJson,} from '../arrays.js'
-        import {download} from '../handle.js'
-        let data = await getJson('./emojis.json')
+        import { jason, } from '../arrays.js'
+        import { download } from '../handle.js'
+        $.gid('imgrendering').on({
+            change() {
+                $.body.setStyles({
+                    'image-rendering': this.value
+                })
+            }
+        })
+        $.body.setStyles({
+            'image-rendering':'pixelated'
+        })
+        let data = await jason('./emojis.json')
         let blobs = new Set
         import $ from '../yay.js'
-        $('h3', { txt: 'I did not make these emojis', parent: document.body })
-        $('button', {
-            parent: document.body,
+        $('div', { parent: document.body }).$('button', {
+            // parent: document.body,
             textContent: `Download All (${data.length})`,
             events: { _click }
         })
-        let container = $('div', {parent:document.body})
+        let container = $('div', { parent: document.body })
         container.push(...data.map(map))
         function map(src, index) {
             src = `./emojis/${src}`
             const attr = { src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`, }
             fetch(src).then(o => o.blob().then(o => blobs.add([o, src.split('/').at(-1)])))
-            return $(`<img src="${src}" alt="#${index+1}" title="Emoji ${index+1}">`,)
+            return $(`<img src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`,)
         }
 
-        window.$=$
+        window.$ = $
         async function _click() {
-            this.setAttributes({disabled:true})
+            this.setAttributes({ disabled: true })
             let zip = JSZip()
             console.log("Downloading...")
             blobs.forEach(([blob, name]) => {
                 zip.file(name, blob)
             })
             download(await zip.generateAsync({ type: 'blob' }))
-            this.setAttributes({disabled:false})
+            this.setAttributes({ disabled: false })
 
         }
     </script>
