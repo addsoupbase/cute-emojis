@@ -1,5 +1,5 @@
 import { jason } from '../../addsoupbase.github.io/arrays.js'
-import {rgbToHex} from '../../addsoupbase.github.io/color.js'
+import { rgbToHex } from '../../addsoupbase.github.io/color.js'
 import *as math from '../../addsoupbase.github.io/num.js'
 console.log("Loading...")
 let ctx = new OffscreenCanvas(0, 0)
@@ -19,7 +19,10 @@ let data = await Array.fromAsync(
     await jason('./emojis.json')
     // ['1314222105394679858.webp']
     , map)
-data.forEach(pixelStuff)
+for (let { length: i } = data; i--;) {
+    pixelStuff(data[i])
+    await new Promise(queueMicrotask)
+}
 console.log(p.textContent = `Images ready!`)
 function pixelStuff(image) {
     let { width, height } = image
@@ -41,10 +44,13 @@ function pixelStuff(image) {
         let amount = parseInt(`${color}`.slice(1), 16)
         all.push(amount)
     }
-    averages.set(image.src.split('/').at(-1), math.average(...all))
+    averages.set(image.src.split('/').at(-1), JSON.stringify(all))
 }
-let e = new Map([...averages.entries()].sort((a, b) => a[1] - b[1]))
-let json = JSON.stringify([...e.keys()])
-a.textContent = 'Download'
-a.download = 'emojis.json'
-a.href = URL.createObjectURL(new Blob([json]))
+console.log(averages)
+if (false) {
+    let e = new Map([...averages.entries()].sort((a, b) => a[1] - b[1]))
+    let json = JSON.stringify([...e.keys()])
+    a.textContent = 'Download'
+    a.download = 'emojis.json'
+    a.href = URL.createObjectURL(new Blob([json]))
+}

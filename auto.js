@@ -18,6 +18,6 @@ catch (e) {
 finally {
    console.log(`⏰ Operation completed after ${performance.now() - time} ms`)
 }
-function map({name}) {
+function map({ name }) {
    return name
 }
