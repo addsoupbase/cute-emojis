@@ -81,7 +81,6 @@
         })
         $.body.delegate({
             contentvisibilityautostatechange(e) {
-                console.log(e)
                 !(e.skipped || e.detail?.skipped) ?
                     this.setAttr({ src: this.dataset.src }) : this.removeAttribute('src')
             }
