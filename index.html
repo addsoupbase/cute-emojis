@@ -81,7 +81,7 @@
         })
         $.body.delegate({
             contentvisibilityautostatechange(e) {
-                !(e.skipped || e.detail?.skipped) ?
+                !(e.skipped) ?
                     this.setAttr({ src: this.dataset.src }) : this.removeAttribute('src')
             }
         })
