@@ -46,9 +46,9 @@
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
-        /* img:not([src]) {
-            opacity: 0;
-        } */
+        img[data-loaded="true"] {
+            cursor: pointer;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" async></script>
 </head>
@@ -80,12 +80,21 @@
         $.body.setStyles({
             'image-rendering': 'pixelated'
         })
-        $.body.delegate({
-            contentvisibilityautostatechange(e) {
-                !(e.skipped) ?
-                    this.setAttr({ src: this.dataset.src }) : this.removeAttribute('src')
-            }
-        })
+            .delegate({
+                async dblclick() {
+                    let src = new URL(this.attr.src, location.href)
+                    try {
+                        await navigator.clipboard.writeText(src)
+                    }
+                    catch {
+                        prompt('Image source:', src)
+                    }
+                },
+                contentvisibilityautostatechange(e) {
+                    !(e.skipped) ?
+                        this.setAttr({ src: this.dataset.src }) : this.removeAttribute('src')
+                }
+            })
         let data = await jason('./emojis.json')
         let blobs = new Set
         let button = $('div', { parent: document.body }).$('<button>Loading...</button>', {
@@ -96,13 +105,13 @@
             events: { _click }
         })
         button.busy(true)
-        let container = $('div', { parent: document.body, attr:{role:'img'} })
+        let container = $('div', { parent: document.body, attr: { role: 'img' } })
         container.busy(true)
         container.push(...data.map(map))
         function map(src, index) {
             src = `./emojis/${src}`
             const attr = { src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`, }
-            all.push(fetch(src).then(o => o.blob().then(o => blobs.add([o, src.split('/').at(-1)]))))
+            all.push(fetch(src).then(o => o.blob().then(o => {blobs.add([o, src.split('/').at(-1)]);$.qs(`img[data-src="${src}"]`).setAttr({$loaded:'true'})})))
             return $(`<img width="300" height="300" data-src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`,)
         }
         Promise.all(all).then(() => {
