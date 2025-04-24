@@ -105,14 +105,19 @@
             events: { _click }
         })
         button.busy(true)
-        let container = $('div', { parent: document.body, attr: { role: 'img' } })
+        let badBrowser = 'mozInnerScreenX' in window || typeof ContentVisibilityAutoStateChangeEvent === 'undefined'
+            let container = $('div', { parent: document.body, attr: { role: 'img' } })
         container.busy(true)
         container.push(...data.map(map))
         function map(src, index) {
             src = `./emojis/${src}`
             const attr = { src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`, }
-            all.push(fetch(src).then(o => o.blob().then(o => {blobs.add([o, src.split('/').at(-1)]);$.qs(`img[data-src="${src}"]`).setAttr({$loaded:'true'})})))
-            return $(`<img width="300" height="300" data-src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`,)
+            all.push(fetch(src).then(o => o.blob().then(o => { blobs.add([o, src.split('/').at(-1)]); $.qs(`img[data-src="${src}"]`).setAttr({ $loaded: 'true' }) })))
+            let out = $(`<img width="300" height="300" data-src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`,)
+            badBrowser && setTimeout(() => {
+                if (out.isVisible) out.attr.src=out.attr['data-src']
+            })
+            return out
         }
         Promise.all(all).then(() => {
             button.setAttr({ disabled: false })
