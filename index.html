@@ -54,88 +54,94 @@
 </head>
 
 <body style="background-color: grey;">
-    <h1>I did <strong>not</strong> make these emojis</h1>
-    <aside>pls tell me if you find any duplicates</aside>
-    <label>
-        Image Rendering
-        <select id="imgrendering">
-            <option value="pixelated">Pixelated</option>
-            <option value="auto">Auto</option>
-            <!-- <option value="smooth">Smooth</option> -->
-            <!-- <option value="crisp-edges">Crisp Edges</option> -->
-        </select>
-    </label>
-    <script type="module">
-        import { jason, } from '../arrays.js'
-        import $ from '../yay.js'
-        import { download } from '../handle.js'
-        let all = []
-        $.gid('imgrendering').on({
-            change() {
-                $.body.setStyles({
-                    'image-rendering': this.value
-                })
+<h1>I did <strong>not</strong> make these emojis</h1>
+<aside>pls tell me if you find any duplicates</aside>
+<label>
+    Image Rendering
+    <select id="imgrendering">
+        <option value="pixelated">Pixelated</option>
+        <option value="auto">Auto</option>
+        <!-- <option value="smooth">Smooth</option> -->
+        <!-- <option value="crisp-edges">Crisp Edges</option> -->
+    </select>
+</label>
+<script type="module">
+    import {jason,} from '../arrays.js'
+    import $ from '../yay.js'
+    import {download} from '../handle.js'
+
+    let all = []
+    $.gid('imgrendering').on({
+        change() {
+            $.body.setStyles({
+                'image-rendering': this.value
+            })
+        }
+    })
+    $.body.setStyles({
+        'image-rendering': 'pixelated'
+    })
+        .delegate({
+            async dblclick() {
+                let src = new URL(this.attr.src, location.href)
+                try {
+                    await navigator.clipboard.writeText(src)
+                } catch {
+                    prompt('Image source:', src)
+                }
+            },
+            contentvisibilityautostatechange(e) {
+                e.skipped ? this.removeAttribute('src') :
+                    this.setAttr({src: this.dataset.src})
             }
         })
-        $.body.setStyles({
-            'image-rendering': 'pixelated'
+    let data = await jason('./emojis.json')
+    let blobs = new Set
+    let button = $('div', {parent: document.body}).$('<button>Loading...</button>', {
+        // parent: document.body,
+        attr: {
+            disabled: true
+        },
+        events: {_click}
+    })
+    button.busy(true)
+    let badBrowser = 'mozInnerScreenX' in window || typeof ContentVisibilityAutoStateChangeEvent === 'undefined'
+    let container = $('div', {parent: document.body, attr: {role: 'img'}})
+    container.busy(true)
+    container.push(...data.map(map))
+
+    function map(src, index) {
+        src = `./emojis/${src}`
+        const attr = {src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`,}
+        all.push(fetch(src).then(o => o.blob().then(o => {
+            blobs.add([o, src.split('/').at(-1)]);
+            $.qs(`img[data-src="${src}"]`).setAttr({$loaded: 'true'})
+        })))
+        let out = $(`<img width="300" height="300" data-src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`,)
+        badBrowser && setTimeout(() => {
+            if (out.isVisible) out.attr.src = out.attr['data-src']
         })
-            .delegate({
-                async dblclick() {
-                    let src = new URL(this.attr.src, location.href)
-                    try {
-                        await navigator.clipboard.writeText(src)
-                    }
-                    catch {
-                        prompt('Image source:', src)
-                    }
-                },
-                contentvisibilityautostatechange(e) {
-                    !(e.skipped) ?
-                        this.setAttr({ src: this.dataset.src }) : this.removeAttribute('src')
-                }
-            })
-        let data = await jason('./emojis.json')
-        let blobs = new Set
-        let button = $('div', { parent: document.body }).$('<button>Loading...</button>', {
-            // parent: document.body,
-            attr: {
-                disabled: true
-            },
-            events: { _click }
+        return out
+    }
+
+    Promise.all(all).then(() => {
+        button.setAttr({disabled: false})
+        container.busy(false)
+        button.busy(false)
+        button.innerHTML = `Download All (${data.length})`
+    })
+
+    async function _click() {
+        this.setAttributes({disabled: true})
+        let zip = JSZip()
+        console.log("Downloading...")
+        blobs.forEach(([blob, name]) => {
+            zip.file(name, blob)
         })
-        button.busy(true)
-        let badBrowser = 'mozInnerScreenX' in window || typeof ContentVisibilityAutoStateChangeEvent === 'undefined'
-            let container = $('div', { parent: document.body, attr: { role: 'img' } })
-        container.busy(true)
-        container.push(...data.map(map))
-        function map(src, index) {
-            src = `./emojis/${src}`
-            const attr = { src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`, }
-            all.push(fetch(src).then(o => o.blob().then(o => { blobs.add([o, src.split('/').at(-1)]); $.qs(`img[data-src="${src}"]`).setAttr({ $loaded: 'true' }) })))
-            let out = $(`<img width="300" height="300" data-src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`,)
-            badBrowser && setTimeout(() => {
-                if (out.isVisible) out.attr.src=out.attr['data-src']
-            })
-            return out
-        }
-        Promise.all(all).then(() => {
-            button.setAttr({ disabled: false })
-            container.busy(false)
-            button.busy(false)
-            button.innerHTML = `Download All (${data.length})`
-        })
-        async function _click() {
-            this.setAttributes({ disabled: true })
-            let zip = JSZip()
-            console.log("Downloading...")
-            blobs.forEach(([blob, name]) => {
-                zip.file(name, blob)
-            })
-            download(await zip.generateAsync({ type: 'blob' }))
-            this.setAttributes({ disabled: false })
-        }
-    </script>
+        download(await zip.generateAsync({type: 'blob'}))
+        this.setAttributes({disabled: false})
+    }
+</script>
 
 </body>
 
