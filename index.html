@@ -92,7 +92,7 @@
 <body style="background-color: grey;">
 <h1>I did <strong>not</strong> make these emojis</h1>
 <aside>pls tell me if you find any duplicates</aside>
-<a href="emojis.zip" download="emojis.zip"  style="margin:10px;font-size:x-large;display:block">Download All</a>
+<a id="down" href="emojis.zip" download="emojis.zip"  style="margin:10px;font-size:x-large;display:block">Download All</a>
 <label>
     Image Rendering
     <select id="imgrendering">
@@ -133,10 +133,10 @@
         }
     })
     let data = await jason('./emojis.json')
+    $.id.down.textContent = `Download All (${data.length})`
     let blobs = new Set
     let badBrowser = 'mozInnerScreenX' in window || typeof ContentVisibilityAutoStateChangeEvent === 'undefined'
     let container = $('div', {parent: document.body, attr: {role: 'img'}})
-    container.busy(true)
     container.push(...data.map(map))
 
     function map(src, index) {
