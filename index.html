@@ -53,17 +53,6 @@
         import '../csshelper.js'
     </script>
     <style>
-        button {
-            border: none;
-            background-color: rgb(102, 217, 102);
-            border-radius: 5px;
-            margin: 20px;
-            transform: scale(1.3, 1.3)
-        }
-
-        button:hover {
-            background-color: rgb(90, 187, 90);
-        }
 
         body {
             text-align: center;
@@ -103,6 +92,7 @@
 <body style="background-color: grey;">
 <h1>I did <strong>not</strong> make these emojis</h1>
 <aside>pls tell me if you find any duplicates</aside>
+<a href="emojis.zip" download="emojis.zip"  style="margin:10px;font-size:x-large;display:block">Download All</a>
 <label>
     Image Rendering
     <select id="imgrendering">
@@ -144,14 +134,6 @@
     })
     let data = await jason('./emojis.json')
     let blobs = new Set
-    let button = $('div', {parent: document.body}).$('<button>Loading...</button>', {
-        // parent: document.body,
-        attr: {
-            disabled: true
-        },
-        events: {_click}
-    })
-    button.busy(true)
     let badBrowser = 'mozInnerScreenX' in window || typeof ContentVisibilityAutoStateChangeEvent === 'undefined'
     let container = $('div', {parent: document.body, attr: {role: 'img'}})
     container.busy(true)
@@ -160,23 +142,20 @@
     function map(src, index) {
         src = `./emojis/${src}`
         const attr = {src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`,}
-        all.push(fetch(src).then(o => o.blob().then(o => {
-            blobs.add([o, src.split('/').at(-1)]);
-            $.qs(`img[data-src="${src}"]`).setAttr({$loaded: 'true'})
-        })))
-        let out = $(`<img width="300" height="300" data-src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`,)
+
+        let out = $(`<img width="300" height="300" data-src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`)
+        /*.on({
+            async _load() {
+                let o = await (await fetch(this.attr.src)).blob()
+                blobs.add([o, src.split('/').at(-1)])
+            }
+        })*/
         badBrowser && setTimeout(() => {
             if (out.isVisible) out.attr.src = out.attr['data-src']
-        })
+        },1000)
         return out
     }
 
-    Promise.all(all).then(() => {
-        button.setAttr({disabled: false})
-        container.busy(false)
-        button.busy(false)
-        button.innerHTML = `Download All (${data.length})`
-    })
 
     async function _click() {
         this.setAttributes({disabled: true})
@@ -188,6 +167,7 @@
         download(await zip.generateAsync({type: 'blob'}))
         this.setAttributes({disabled: false})
     }
+
 </script>
 
 </body>
