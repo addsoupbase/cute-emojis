@@ -69,6 +69,7 @@
     async function blobToImage(url) {
         let img = $(`<img data-src="${url}" src="./emojis/${url}">`)
         await img.until('load', 'error')
+
         return img
     }
 
@@ -91,10 +92,10 @@
             alpha.push(a)
         }
         let avgColor = Color(
-            math.average.apply(1, red) | 0,
-            math.average.apply(1, green) | 0,
-            math.average.apply(1, blue) | 0,
-            math.average.apply(1, alpha) | 0
+            math.average.apply(1, red) ,
+            math.average.apply(1, green) ,
+            math.average.apply(1, blue) ,
+            math.average.apply(1, alpha)
         )
         final.has(+avgColor.h) || final.set(+avgColor.h, [])
         let n = final.get(+avgColor.h)
@@ -108,10 +109,13 @@
                 willReadFrequently: true
             })
             let images = (await Promise.all((await jason(`./emojis.json`)).map(blobToImage)))
+            await h.wait(1000)
             // await Promise.all([].map.call(await h.reqFile('image/*', true), URL.createObjectURL).map(blobToImage))
             for (let {length: i} = images; i--;) {
                 let img = images[i]
                 ctx.clearRect(0, 0, 50, 50)
+                let n = 10
+
                 ctx.drawImage(img.valueOf(), 0, 0, 50, 50)
                 let src = img.attr.$src
                 imageData.push({data: ctx.getImageData(0, 0, 50, 50), src})

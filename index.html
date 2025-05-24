@@ -94,7 +94,6 @@
             width: 276px;
         }
     </style>
-<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" async></script>-->
 </head>
 
 <body style="background-color: grey;">
@@ -114,7 +113,8 @@
     import {jason,} from '../arrays.js'
     import $ from '../yay.js'
     import {download} from '../handle.js'
-
+    let local = location.href.includes('localhost')
+    local&&(window.download=_click,import('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'))
     let all = []
     $.gid('imgrendering').on({
         change() {
@@ -127,7 +127,10 @@
         'image-rendering': 'pixelated'
     })
     .delegate({
-        async dblclick() {
+        async dblclick(
+
+        ) {
+
             let src = new URL(this.attr.src, location.href)
             try {
                 await navigator.clipboard.writeText(src)
@@ -152,12 +155,12 @@
         const attr = {src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`,}
 
         let out = $(`<img width="300" height="300" data-src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`)
-        /*.on({
+        local&&out.on({
             async _load() {
                 let o = await (await fetch(this.attr.src)).blob()
-                blobs.add([o, src.split('/').at(-1)])
+                blobs.add([o, `Emoji_${index+1}${src.split('/').at(-1).match(/\.\w+/)}`])
             }
-        })*/
+        })
         badBrowser && setTimeout(() => {
             if (out.isVisible) out.attr.src = out.attr['data-src']
         },1000)
@@ -166,14 +169,14 @@
 
 
     async function _click() {
-        this.setAttributes({disabled: true})
+        // this.setAttributes({disabled: true})
         let zip = JSZip()
         console.log("Downloading...")
         blobs.forEach(([blob, name]) => {
             zip.file(name, blob)
         })
         download(await zip.generateAsync({type: 'blob'}))
-        this.setAttributes({disabled: false})
+        // this.setAttributes({disabled: false})
     }
 
 </script>
