@@ -76,7 +76,7 @@
     let {button} = $.id
     let imageData = []
     let final = new Map
-    function loopOverImageData(stuff) {
+     function loopOverImageData(stuff,  aa) {
         let data = stuff.data.data
         let src = stuff.src
         let red = [], green = [], blue = [], alpha = []
@@ -85,7 +85,7 @@
                 g = data[i + 1],
                 b = data[i + 2],
                 a = data[i + 3]
-            if (!a) continue
+            if (a < 1 || ((r===255 && g===255 && b===255)) || (!r && !g && !b)) continue
             red.push(r)
             green.push(g)
             blue.push(b)
@@ -94,33 +94,41 @@
         let avgColor = Color(
             math.average.apply(1, red) ,
             math.average.apply(1, green) ,
-            math.average.apply(1, blue) ,
-            math.average.apply(1, alpha)
+             math.average.apply(1, blue) ,
+             math.average.apply(1, alpha)
         )
         final.has(+avgColor.h) || final.set(+avgColor.h, [])
         let n = final.get(+avgColor.h)
         n.push(src)
+        console.log(`${(aa / len)*100}%`)
     }
-
-    button.on({
+    let len
+        button.on({
         async _click() {
+            let size = 200
             this.busy(true)
-            let ctx = new OffscreenCanvas(50, 50).getContext('2d', {
+            let ctx = new OffscreenCanvas(size, size).getContext('2d', {
                 willReadFrequently: true
             })
             let images = (await Promise.all((await jason(`./emojis.json`)).map(blobToImage)))
+                len = images.length
             await h.wait(1000)
             // await Promise.all([].map.call(await h.reqFile('image/*', true), URL.createObjectURL).map(blobToImage))
-            for (let {length: i} = images; i--;) {
+            console.clear()
+            for (let {length: i} = images, n = i; i--;) {
                 let img = images[i]
-                ctx.clearRect(0, 0, 50, 50)
-                let n = 10
-
-                ctx.drawImage(img.valueOf(), 0, 0, 50, 50)
+                let {width,height} = img
+                width=Math.min(size,width)
+                height=Math.min(size,height)
+                ctx.canvas.width = width
+                ctx.canvas.height = height
+                ctx.clearRect(0, 0, width, height)
+                ctx.drawImage(img.valueOf(), 0, 0)
                 let src = img.attr.$src
-                imageData.push({data: ctx.getImageData(0, 0, 50, 50), src})
+                imageData.push({data: ctx.getImageData(0, 0, width, height), src})
             }
             imageData.forEach(loopOverImageData)
+
             let out = [...final.entries()].sort(sort).map(map)
             let str = JSON.stringify(out.flat(1 / 0))
             try {
