@@ -137,7 +137,7 @@
 
         ) {
 
-            let src = new URL(this.attr.src, location.href)
+            let src = new URL(this.attr.src, 'https://addsoupbase.github.io/cute-emojis/')
             try {
                 await navigator.clipboard.writeText(src)
             } catch {
