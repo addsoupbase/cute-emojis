@@ -127,20 +127,22 @@
         'use strict'
         addEventListener('error', function hi(e) {
             function thing() {
-                removeEventListener('error',hi)
+                removeEventListener('error', hi)
                 var container = document.getElementById('images')
                 if (container.childElementCount > 1) return
                 // browsers without top level await
                 var req = new XMLHttpRequest
                 req.open('GET', './emojis.json')
                 req.onload = function () {
-                    var data = typeof JSON === 'object' ? JSON.parse(req.responseText) : Function('return ' +req.responseText)()
+                    var data = typeof JSON === 'object' ? JSON.parse(req.responseText) : Function('return ' + req.responseText)()
                     for (var i = 0, length = data.length; i < length; ++i) {
                         var n = document.createElement('img'),
                             o = data[i],
                             alt = 'Emoji #' + i
                         n.setAttribute('alt', alt)
                         n.setAttribute('title', alt)
+                        n.setAttribute('loading','lazy')
+                        n.setAttribute('decoding','async')
                         n.setAttribute('src', './emojis/' + o)
                         container.appendChild(n)
                     }
@@ -164,13 +166,15 @@
                     n.open('GET', './emojis.json', false)
                     n.send()
                     function f(o, i) {
-                        return '<img src="./emojis/' + o + '" loading="lazy" alt="Emoji #' + i + '" title="Emoji #' + i + '">'
+                        return '<img decoding="async" src="./emojis/' + o + '" loading="lazy" alt="Emoji #' + i + '" title="Emoji #' + i + '">'
                     }
-                    if (typeof JSON !== 'undefined' && [].map) document.write.apply(document, JSON.parse(n.responseText).map(f))
+                    if (typeof JSON !== 'undefined' && [].map) document.write(JSON.parse(n.responseText).map(f).join(''))
                     else {
                         // what am i even doing at this point lmao
-                        var data = Function('return ' + n.responseText)()
-                        for (var i = 0, length = data.length; i < length; ++i)  document.write(f(data[i], i))
+                        var data = Function('return ' + n.responseText)(),
+                        strings = []
+                        for (var i = 0, length = data.length; i < length; ++i)  strings.push(f(data[i], i))
+                        document.write(strings.join(''))
                     }
                 })()
         </script>
@@ -190,10 +194,7 @@
             }
         })
         $.body.delegate({
-            async dblclick(
-
-            ) {
-
+            async dblclick() {
                 let src = new URL(this.attr.src, 'https://addsoupbase.github.io/cute-emojis/')
                 try {
                     await navigator.clipboard.writeText(src)
@@ -212,12 +213,10 @@
         let badBrowser = 'mozInnerScreenX' in window || typeof ContentVisibilityAutoStateChangeEvent === 'undefined'
         let container = $.id.images
         container.push(...data.map(map))
-
         function map(src, index) {
             src = `./emojis/${src}`
             const attr = { src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`, }
-
-            let out = $(`<img width="300" height="300" data-src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`)
+            let out = $(`<img loading="lazy" decoding="async" width="300" height="300" data-src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`)
             local && out.on({
                 async _load() {
                     let o = await (await fetch(this.attr.src)).blob()
