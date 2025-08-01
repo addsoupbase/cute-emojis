@@ -51,7 +51,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="apple-touch-startup-image"
         href="https://addsoupbase.github.io/cute-emojis/emojis/1275614671948218370.gif">
-    <script src="../css.js" blocking="render">   </script>
+    <script src="../css.js" blocking="render"></script>
+    <script src="../css_bad.js" nomodule></script>
     <style>
         body {
             text-align: center;
@@ -129,9 +130,15 @@
                 var n = new XMLHttpRequest
                 n.open('GET', './emojis.json', false)
                 n.send()
-                document.write.apply(document, JSON.parse(n.responseText).map(function (o) {
-                    return '<img src="./emojis/' + o + '" loading="lazy">'
-                }))
+                function f(o, i) {
+                    return '<img src="./emojis/' + o + '" loading="lazy" alt="Emoji #' + i + '" title="Emoji #' + i + '">'
+                }
+                if (typeof JSON !== 'undefined' && [].map) document.write.apply(document, JSON.parse(n.responseText).map(f))
+                else {
+                    // what am i even doing at this point lmao
+                    var data = Function('return ' + n.responseText)()
+                    for (var i = 0, length = data.length; i < length; ++i)  document.write(f(data[i], i))
+                }
             })()
         </script>
     </div>
