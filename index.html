@@ -15,7 +15,8 @@
     <meta property="og:image:type" content="image/gif">
     <meta name="twitter:card" content="summary">
     <!-- 'summary_large_image', 'summary', 'app', or 'player' -->
-    <link rel="icon" type="image/x-icon" href="https://addsoupbase.github.io/cute-emojis/emojis/1275614671948218370.gif">
+    <link rel="icon" type="image/x-icon"
+        href="https://addsoupbase.github.io/cute-emojis/emojis/1275614671948218370.gif">
     <meta name="robots" content="index">
     <meta name="theme-color" content="#Ed98E7">
     <meta property="og:type" content="website">
@@ -48,12 +49,10 @@
     <meta name="twitter:image" content="https://addsoupbase.github.io/cute-emojis/emojis/1325188680549400677.gif">
     <meta name="apple-mobile-web-app-title" content="cute-emojis">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <link rel="apple-touch-startup-image" href="https://addsoupbase.github.io/cute-emojis/emojis/1275614671948218370.gif">
-    <script type="module" blocking="render">
-        import 'https://addsoupbase.github.io/csshelper.js'
-    </script>
+    <link rel="apple-touch-startup-image"
+        href="https://addsoupbase.github.io/cute-emojis/emojis/1275614671948218370.gif">
+    <script src="../css.js" blocking="render">   </script>
     <style>
-
         body {
             text-align: center;
             font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -64,6 +63,7 @@
             width: 90px;
             height: 90px;
             --content-visibility: auto;
+            image-rendering: pixelated;
         }
 
         label {
@@ -81,111 +81,128 @@
             text-align: center;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
-    img[data-src="./emojis/1314222584795107399.gif"] {
-        width:340px;
-    }
+
+        img[data-src="./emojis/1314222584795107399.gif"] {
+            width: 340px;
+        }
+
         img[data-loaded="true"] {
             cursor: pointer;
         }
+
         img[data-src="./emojis/09308175253971911.gif"] {
-            width:190px
+            width: 190px
         }
+
         img[data-src="./emojis/7581019C-F371-4CD4-881B-8083E118B51B.gif"] {
             width: 276px;
         }
+
         img[data-src="./emojis/1314222086939476051.gif"] {
             width: 315px
         }
+
         img[data-src="./emojis/8368-ilovesanrio.gif"] {
-            width:200px
+            width: 200px
         }
     </style>
 </head>
 
 <body style="background-color: grey;">
-<h1>I did <strong>not</strong> make these emojis</h1>
-<aside>pls tell me if you find any duplicates</aside>
-<a id="down" href="emojis.zip" download="emojis.zip"  style="margin:10px;font-size:x-large;display:block">Download All</a>
-<label>
-    Image Rendering
-    <select id="imgrendering">
-        <option value="pixelated">Pixelated</option>
-        <option value="auto">Auto</option>
-        <!-- <option value="smooth">Smooth</option> -->
-        <!-- <option value="crisp-edges">Crisp Edges</option> -->
-    </select>
-</label>
-<script type="module">
-    import {jason,} from '../arrays.js'
-    import $ from '../yay.js'
-    import {download} from '../handle.js'
-    let local = location.href.includes('localhost')
-    local&&(window.download=_click,import('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'))
-    let all = []
-    $.gid('imgrendering').on({
-        change() {
-            $.body.setStyles({
-                'image-rendering': this.value
+    <h1>I did <strong>not</strong> make these emojis</h1>
+    <aside>pls tell me if you find any duplicates</aside>
+    <a id="down" href="emojis.zip" download="emojis.zip" style="margin:10px;font-size:x-large;display:block">Download
+        All</a>
+    <label>
+        Image Rendering
+        <select id="imgrendering">
+            <option value="pixelated">Pixelated</option>
+            <option value="auto">Auto</option>
+            <!-- <option value="smooth">Smooth</option> -->
+            <!-- <option value="crisp-edges">Crisp Edges</option> -->
+        </select>
+    </label>
+    <div role="img" id="images">
+        <script nomodule>
+            (function () {
+                'use strict'
+                var n = new XMLHttpRequest
+                n.open('GET', './emojis.json', false)
+                n.send()
+                document.write.apply(document, JSON.parse(n.responseText).map(function (o) {
+                    return '<img src="./emojis/' + o + '" loading="lazy">'
+                }))
+            })()
+        </script>
+    </div>
+    <script type="module">
+        import { jason, } from '../arrays.js'
+        import $ from '../yay.js'
+        import { download } from '../handle.js'
+        let local = location.href.includes('localhost')
+        local && (window.download = _click, import('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'))
+        let all = []
+        $.gid('imgrendering').on({
+            change() {
+                $.body.setStyles({
+                    'image-rendering': this.value
+                })
+            }
+        })
+        $.body.delegate({
+            async dblclick(
+
+            ) {
+
+                let src = new URL(this.attr.src, 'https://addsoupbase.github.io/cute-emojis/')
+                try {
+                    await navigator.clipboard.writeText(src)
+                } catch {
+                    prompt('Image source:', src)
+                }
+            },
+            contentvisibilityautostatechange(e) {
+                e.skipped ? this.removeAttribute('src') :
+                    this.setAttr({ src: this.dataset.src })
+            }
+        })
+        let data = await jason('./emojis.json')
+        $.id.down.textContent = `Download All (${data.length})`
+        let blobs = new Set
+        let badBrowser = 'mozInnerScreenX' in window || typeof ContentVisibilityAutoStateChangeEvent === 'undefined'
+        let container = $.id.images
+        container.push(...data.map(map))
+
+        function map(src, index) {
+            src = `./emojis/${src}`
+            const attr = { src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`, }
+
+            let out = $(`<img width="300" height="300" data-src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`)
+            local && out.on({
+                async _load() {
+                    let o = await (await fetch(this.attr.src)).blob()
+                    blobs.add([o, `Emoji_${index + 1}${src.split('/').at(-1).match(/\.\w+/)}`])
+                }
             })
+            badBrowser && setTimeout(() => {
+                if (out.isVisible) out.attr.src = out.attr['data-src']
+            }, 1000)
+            return out
         }
-    })
-    $.body.setStyles({
-        'image-rendering': 'pixelated'
-    })
-    .delegate({
-        async dblclick(
 
-        ) {
 
-            let src = new URL(this.attr.src, 'https://addsoupbase.github.io/cute-emojis/')
-            try {
-                await navigator.clipboard.writeText(src)
-            } catch {
-                prompt('Image source:', src)
-            }
-        },
-        contentvisibilityautostatechange(e) {
-            e.skipped ? this.removeAttribute('src') :
-                this.setAttr({src: this.dataset.src})
+        async function _click() {
+            // this.setAttributes({disabled: true})
+            let zip = JSZip()
+            console.log("Downloading...")
+            blobs.forEach(([blob, name]) => {
+                zip.file(name, blob)
+            })
+            download(await zip.generateAsync({ type: 'blob' }))
+            // this.setAttributes({disabled: false})
         }
-    })
-    let data = await jason('./emojis.json')
-    $.id.down.textContent = `Download All (${data.length})`
-    let blobs = new Set
-    let badBrowser = 'mozInnerScreenX' in window || typeof ContentVisibilityAutoStateChangeEvent === 'undefined'
-    let container = $('div', {parent: document.body, attr: {role: 'img'}})
-    container.push(...data.map(map))
 
-    function map(src, index) {
-        src = `./emojis/${src}`
-        const attr = {src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`,}
-
-        let out = $(`<img width="300" height="300" data-src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`)
-        local&&out.on({
-            async _load() {
-                let o = await (await fetch(this.attr.src)).blob()
-                blobs.add([o, `Emoji_${index+1}${src.split('/').at(-1).match(/\.\w+/)}`])
-            }
-        })
-        badBrowser && setTimeout(() => {
-            if (out.isVisible) out.attr.src = out.attr['data-src']
-        },1000)
-        return out
-    }
-
-
-    async function _click() {
-        // this.setAttributes({disabled: true})
-        let zip = JSZip()
-        console.log("Downloading...")
-        blobs.forEach(([blob, name]) => {
-            zip.file(name, blob)
-        })
-        download(await zip.generateAsync({type: 'blob'}))
-        // this.setAttributes({disabled: false})
-    }
-
-</script>
-
+    </script>
 </body>
+
 </html>
