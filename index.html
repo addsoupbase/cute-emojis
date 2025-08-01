@@ -123,23 +123,56 @@
             <!-- <option value="crisp-edges">Crisp Edges</option> -->
         </select>
     </label>
+    <script>
+        'use strict'
+        addEventListener('error', function hi(e) {
+            function thing() {
+                removeEventListener('error',hi)
+                var container = document.getElementById('images')
+                if (container.childElementCount > 1) return
+                // browsers without top level await
+                var req = new XMLHttpRequest
+                req.open('GET', './emojis.json')
+                req.onload = function () {
+                    var data = typeof JSON === 'object' ? JSON.parse(req.responseText) : Function('return ' +req.responseText)()
+                    for (var i = 0, length = data.length; i < length; ++i) {
+                        var n = document.createElement('img'),
+                            o = data[i],
+                            alt = 'Emoji #' + i
+                        n.setAttribute('alt', alt)
+                        n.setAttribute('title', alt)
+                        n.setAttribute('src', './emojis/' + o)
+                        container.appendChild(n)
+                    }
+                }
+                req.send()
+            }
+            try {
+                if (/syntax/i.test(e.error ? e.error.name : e.message)) thing()
+            }
+            catch (e) {
+                thing()
+            }
+        })
+    </script>
     <div role="img" id="images">
         <script nomodule>
-            (function () {
-                'use strict'
-                var n = new XMLHttpRequest
-                n.open('GET', './emojis.json', false)
-                n.send()
-                function f(o, i) {
-                    return '<img src="./emojis/' + o + '" loading="lazy" alt="Emoji #' + i + '" title="Emoji #' + i + '">'
-                }
-                if (typeof JSON !== 'undefined' && [].map) document.write.apply(document, JSON.parse(n.responseText).map(f))
-                else {
-                    // what am i even doing at this point lmao
-                    var data = Function('return ' + n.responseText)()
-                    for (var i = 0, length = data.length; i < length; ++i)  document.write(f(data[i], i))
-                }
-            })()
+                (function () {
+                    // mainly for IE
+                    'use strict'
+                    var n = new XMLHttpRequest
+                    n.open('GET', './emojis.json', false)
+                    n.send()
+                    function f(o, i) {
+                        return '<img src="./emojis/' + o + '" loading="lazy" alt="Emoji #' + i + '" title="Emoji #' + i + '">'
+                    }
+                    if (typeof JSON !== 'undefined' && [].map) document.write.apply(document, JSON.parse(n.responseText).map(f))
+                    else {
+                        // what am i even doing at this point lmao
+                        var data = Function('return ' + n.responseText)()
+                        for (var i = 0, length = data.length; i < length; ++i)  document.write(f(data[i], i))
+                    }
+                })()
         </script>
     </div>
     <script type="module">
