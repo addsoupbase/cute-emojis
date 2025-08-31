@@ -106,7 +106,7 @@
         button.on({
         async _click() {
             let size = 200
-            this.busy(true)
+            this.attr._busy=true
             let ctx = new OffscreenCanvas(size, size).getContext('2d', {
                 willReadFrequently: true
             })
@@ -137,7 +137,7 @@
                 prompt('Download ready!', str)
             }
             finally {
-                this.busy(false)
+                this.attr._busy=false
             }
         }
     })
