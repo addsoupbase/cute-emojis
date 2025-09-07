@@ -224,8 +224,8 @@
         let blobs = new Set
         let badBrowser = 'mozInnerScreenX' in window || typeof ContentVisibilityAutoStateChangeEvent === 'undefined'
         let container = $.id.images
-        for (let i in data) {
-            map(data[i],+i)
+        for (let i = 0, l = data.length; i < l; ++i) {
+            map(data[i],i)
             await window.scheduler?.yield?.()
         }
         // container.push(...data.map(map))
