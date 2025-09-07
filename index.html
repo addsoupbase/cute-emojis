@@ -3,7 +3,7 @@
 
 <head>
     <script>
-        addEventListener('unhandledrejection',console.warn)
+        addEventListener('unhandledrejection', console.warn)
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,9 +61,12 @@
             text-align: center;
             image-rendering: pixelated;
         }
-        :root, button {
+
+        :root,
+        button {
             font-family: var(--system-font);
         }
+
         img {
             display: inline-block;
             width: 90px;
@@ -144,8 +147,8 @@
                             alt = 'Emoji #' + i
                         n.setAttribute('alt', alt)
                         n.setAttribute('title', alt)
-                        n.setAttribute('loading','lazy')
-                        n.setAttribute('decoding','async')
+                        n.setAttribute('loading', 'lazy')
+                        n.setAttribute('decoding', 'async')
                         n.setAttribute('src', './emojis/' + o)
                         container.appendChild(n)
                     }
@@ -175,7 +178,7 @@
                     else {
                         // what am i even doing at this point lmao
                         var data = Function('return ' + n.responseText)(),
-                        strings = []
+                            strings = []
                         for (var i = 0, length = data.length; i < length; ++i)  strings.push(f(data[i], i))
                         document.write(strings.join(''))
                     }
@@ -194,7 +197,7 @@
                 }
             })
             import('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js')
-        } 
+        }
         let all = []
         $.gid('imgrendering').on({
             change() {
@@ -213,8 +216,7 @@
                 }
             },
             contentvisibilityautostatechange(e) {
-                e.skipped ? this.removeAttribute('src') :
-                    this.setAttr({ src: this.dataset.src })
+                e.skipped ? this.removeAttribute('src'):this.setAttr({ src: this.dataset.src })
             }
         })
         let data = await jason('./emojis.json')
@@ -222,8 +224,13 @@
         let blobs = new Set
         let badBrowser = 'mozInnerScreenX' in window || typeof ContentVisibilityAutoStateChangeEvent === 'undefined'
         let container = $.id.images
-        container.push(...data.map(map))
-        function map(src, index) {
+        for (let i in data) {
+            map(data[i],+i)
+            await window.scheduler?.yield?.()
+        }
+        // container.push(...data.map(map))
+        async function map(src, index) {
+            await window.scheduler?.yield?.()
             src = `./emojis/${src}`
             const attr = { src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`, }
             let out = $(`<img loading="lazy" decoding="async" width="300" height="300" data-src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`)
@@ -236,7 +243,8 @@
             badBrowser && setTimeout(() => {
                 if (out.isVisible) out.attr.src = out.attr['data-src']
             }, 1000)
-            return out
+            container.push(out)
+            // return out
         }
 
 
