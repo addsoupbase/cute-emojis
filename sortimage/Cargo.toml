@@ -1,0 +1,16 @@
+[package]
+name = "sortimage"
+version = "0.1.0"
+authors = ["addsoupbase"]
+description = "A sample project with wasm-pack"
+license = "MIT/Apache-2.0"
+repository = "https://github.com/yourgithubusername/hello-wasm.js"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
+serde = { version = "1.0", features = ["derive"] }
+js-sys = "0.3.80"

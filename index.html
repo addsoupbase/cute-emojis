@@ -226,7 +226,7 @@
         let container = $.id.images
         for (let i = 0, l = data.length; i < l; ++i) {
             map(data[i],i)
-            await window.scheduler?.yield?.()
+            await (window.scheduler?.yield?.())
         }
         // container.push(...data.map(map))
         async function map(src, index) {

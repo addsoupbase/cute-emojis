@@ -69,7 +69,6 @@
     async function blobToImage(url) {
         let img = $(`<img data-src="${url}" src="./emojis/${url}">`)
         await img.until('load', 'error')
-
         return img
     }
 
