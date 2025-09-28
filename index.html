@@ -164,27 +164,30 @@
         })
     </script>
     <div role="img" id="images">
-        <script nomodule>
-                (function () {
-                    // mainly for IE
-                    'use strict'
-                    var n = new XMLHttpRequest
-                    n.open('GET', './emojis.json', false)
-                    n.send()
+
+    </div>
+    <script nomodule>
+            (function () {
+                // mainly for IE
+                'use strict'
+                var n = new XMLHttpRequest
+                n.open('GET', './emojis.json')
+                n.onload = function () {
                     function f(o, i) {
                         return '<img decoding="async" src="./emojis/' + o + '" loading="lazy" alt="Emoji #' + i + '" title="Emoji #' + i + '">'
                     }
-                    if (typeof JSON !== 'undefined' && [].map) document.write(JSON.parse(n.responseText).map(f).join(''))
+                    if (typeof JSON !== 'undefined' && [].map) images.innerHTML = (JSON.parse(n.responseText).map(f).join(''))
                     else {
                         // what am i even doing at this point lmao
                         var data = Function('return ' + n.responseText)(),
                             strings = []
                         for (var i = 0, length = data.length; i < length; ++i)  strings.push(f(data[i], i))
-                        document.write(strings.join(''))
+                        images.innerHTML = (strings.join(''))
                     }
-                })()
-        </script>
-    </div>
+                }
+                n.send()
+            })(document.getElementById('images'))
+    </script>
     <script type="module">
         import { jason, } from '../arrays.js'
         import $ from '../yay.js'
@@ -216,7 +219,7 @@
                 }
             },
             contentvisibilityautostatechange(e) {
-                e.skipped ? this.removeAttribute('src'):this.setAttr({ src: this.dataset.src })
+                e.skipped ? this.removeAttribute('src') : this.setAttr({ src: this.dataset.src })
             }
         })
         let data = await jason('./emojis.json')
@@ -225,7 +228,7 @@
         let badBrowser = 'mozInnerScreenX' in window || typeof ContentVisibilityAutoStateChangeEvent === 'undefined'
         let container = $.id.images
         for (let i = 0, l = data.length; i < l; ++i) {
-            map(data[i],i)
+            map(data[i], i)
             await (window.scheduler?.yield?.())
         }
         // container.push(...data.map(map))

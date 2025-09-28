@@ -88,9 +88,8 @@
 		with {type:"json"}
 		let sources = []
 		let data = []
-		await $.id.go.until('click')
+		await Promise.all([$.id.go.until('click'),f()])
 		await Promise.all(emojis	.map(map))
-		await f()
 		$.id.load.show()
 		async function map(src) {
 			let n = new Image
