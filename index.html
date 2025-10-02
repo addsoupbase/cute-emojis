@@ -61,7 +61,6 @@
             text-align: center;
             image-rendering: pixelated;
         }
-
         :root,
         button {
             font-family: var(--system-font);
@@ -89,7 +88,7 @@
             text-align: center;
         }
 
-        img[data-src="./emojis/1314222584795107399.gif"] {
+        img[src="./emojis/1314222584795107399.gif"] {
             width: 340px;
         }
 
@@ -97,19 +96,19 @@
             cursor: pointer;
         }
 
-        img[data-src="./emojis/09308175253971911.gif"] {
+        img[src="./emojis/09308175253971911.gif"] {
             width: 190px
         }
 
-        img[data-src="./emojis/7581019C-F371-4CD4-881B-8083E118B51B.gif"] {
+        img[src="./emojis/7581019C-F371-4CD4-881B-8083E118B51B.gif"] {
             width: 276px;
         }
 
-        img[data-src="./emojis/1314222086939476051.gif"] {
+        img[src="./emojis/1314222086939476051.gif"] {
             width: 315px
         }
 
-        img[data-src="./emojis/8368-ilovesanrio.gif"] {
+        img[src="./emojis/8368-ilovesanrio.gif"] {
             width: 200px
         }
     </style>
@@ -191,6 +190,7 @@
     <script type="module">
         import { jason, } from '../arrays.js'
         import $ from '../yay.js'
+        const h = window[Symbol.for("[[HModule]]")]
         import { download } from '../handle.js'
         let local = location.href.includes('localhost')
         if (local) {
@@ -218,9 +218,9 @@
                     prompt('Image source:', src)
                 }
             },
-            contentvisibilityautostatechange(e) {
-                e.skipped ? this.removeAttribute('src') : this.setAttr({ src: this.dataset.src })
-            }
+            // contentvisibilityautostatechange(e) {
+                // e.skipped ? this.removeAttribute('src') : this.setAttr({ src: this.dataset.src })
+            // }
         })
         let data = await jason('./emojis.json')
         $.id.down.textContent = `Download All (${data.length})`
@@ -236,16 +236,16 @@
             await window.scheduler?.yield?.()
             src = `./emojis/${src}`
             const attr = { src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`, }
-            let out = $(`<img loading="lazy" decoding="async" width="300" height="300" data-src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`)
+            let out = $(`<img loading="lazy" decoding="async" width="300" height="300" src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`)
             local && out.on({
                 async _load() {
                     let o = await (await fetch(this.attr.src)).blob()
                     blobs.add([o, `Emoji_${index + 1}${src.split('/').at(-1).match(/\.\w+/)}`])
                 }
             })
-            badBrowser && setTimeout(() => {
+            /*badBrowser && setTimeout(() => {
                 if (out.isVisible) out.attr.src = out.attr['data-src']
-            }, 1000)
+            }, 1000)*/
             container.push(out)
             // return out
         }
