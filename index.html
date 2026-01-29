@@ -54,8 +54,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="apple-touch-startup-image"
         href="https://addsoupbase.github.io/cute-emojis/emojis/1275614671948218370.gif">
-                <script src="../legacy.js" nomodule></script>
-
+        <link rel="preload" as="fetch" href="./emojis.json" crossorigin>
+    <script src="../legacy.js" nomodule></script>
     <script src="../css.js" blocking="render"></script>
     <script src="../css_bad.js" nomodule></script>
     <style>
@@ -63,6 +63,7 @@
             text-align: center;
             image-rendering: pixelated;
         }
+
         :root,
         button {
             font-family: var(--system-font);
@@ -130,43 +131,39 @@
             <!-- <option value="crisp-edges">Crisp Edges</option> -->
         </select>
     </label>
-    <script>
+
+    <div role="img" id="images">
+
+    </div>
+        <script>
         'use strict'
-        addEventListener('error', function hi(e) {
-            function thing() {
-                removeEventListener('error', hi)
+        document.getElementById('imgrendering').onchange = function() {
+            document.body.style.imageRendering = this.value
+        }
+        !function thing() {
                 var container = document.getElementById('images')
-                if (container.childElementCount > 1) return
                 // browsers without top level await
                 var req = new XMLHttpRequest
                 req.open('GET', './emojis.json')
+                var frag = document.createDocumentFragment()
                 req.onload = function () {
                     var data = typeof JSON === 'object' ? JSON.parse(req.responseText) : Function('return ' + req.responseText)()
                     for (var i = 0, length = data.length; i < length; ++i) {
                         var n = document.createElement('img'),
                             o = data[i],
-                            alt = 'Emoji #' + i
+                            alt = 'Emoji #' + (i+1)
                         n.setAttribute('alt', alt)
                         n.setAttribute('title', alt)
                         n.setAttribute('loading', 'lazy')
                         n.setAttribute('decoding', 'async')
                         n.setAttribute('src', './emojis/' + o)
-                        container.appendChild(n)
+                        frag.appendChild(n)
                     }
+                    container.appendChild(frag)
                 }
                 req.send()
-            }
-            try {
-                if (/syntax/i.test(e.error ? e.error.name : e.message)) thing()
-            }
-            catch (e) {
-                thing()
-            }
-        })
+            }()
     </script>
-    <div role="img" id="images">
-
-    </div>
     <script nomodule>
             (function () {
                 // mainly for IE
@@ -189,82 +186,25 @@
                 n.send()
             })(document.getElementById('images'))
     </script>
-    <script type="module">
-        import { jason, } from '../arrays.js'
-        import $ from '../yay.js'
-        const h = window[Symbol.for("[[HModule]]")]
-        import { download } from '../handle.js'
-        let local = location.href.includes('localhost')
-        if (local) {
-            $.body.afterbegin = $(`<button class="centerx">Download Local ZIP</button>`, {
-                events: {
-                    _click
-                }
-            })
-            import('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js')
-        }
-        let all = []
-        $.gid('imgrendering').on({
+    <!-- <script type="module">
+        import * as v from '../v4.js'
+        import { jason } from '../arrays.js'
+        onload = null
+        const { h, $ } = v
+        const { images, imgrendering } = v.id
+        let batch = document.createDocumentFragment()
+        let emojis = await jason('./emojis.json')
+        emojis.forEach((o, i)=>{
+            batch.appendChild($`<img loading="lazy" src="./emojis/${o}" alt="Emoji ${++i}" title="Emoji ${i}">`
+                .valueOf()
+            )
+        })
+        images.appendChild(batch)
+        imgrendering.on({
             change() {
-                $.body.setStyles({
-                    'image-rendering': this.value
-                })
+                document.body.style.imageRendering = this.value
             }
         })
-        $.body.delegate({
-            async dblclick() {
-                let src = new URL(this.attr.src, 'https://addsoupbase.github.io/cute-emojis/')
-                try {
-                    await navigator.clipboard.writeText(src)
-                } catch {
-                    prompt('Image source:', src)
-                }
-            },
-            // contentvisibilityautostatechange(e) {
-                // e.skipped ? this.removeAttribute('src') : this.setAttr({ src: this.dataset.src })
-            // }
-        })
-        let data = await jason('./emojis.json')
-        $.id.down.textContent = `Download All (${data.length})`
-        let blobs = new Set
-        let badBrowser = 'mozInnerScreenX' in window || typeof ContentVisibilityAutoStateChangeEvent === 'undefined'
-        let container = $.id.images
-        for (let i = 0, l = data.length; i < l; ++i) {
-            map(data[i], i)
-            await (window.scheduler?.yield?.())
-        }
-        // container.push(...data.map(map))
-        async function map(src, index) {
-            await window.scheduler?.yield?.()
-            src = `./emojis/${src}`
-            const attr = { src, alt: `#${index + 1}`, title: `Emoji ${index + 1}`, }
-            let out = $(`<img loading="lazy" decoding="async" width="300" height="300" src="${src}" alt="#${index + 1}" title="Emoji ${index + 1}">`)
-            local && out.on({
-                async _load() {
-                    let o = await (await fetch(this.attr.src)).blob()
-                    blobs.add([o, `Emoji_${index + 1}${src.split('/').at(-1).match(/\.\w+/)}`])
-                }
-            })
-            /*badBrowser && setTimeout(() => {
-                if (out.isVisible) out.attr.src = out.attr['data-src']
-            }, 1000)*/
-            container.push(out)
-            // return out
-        }
-
-
-        async function _click() {
-            // this.setAttributes({disabled: true})
-            let zip = JSZip()
-            console.log("Downloading...")
-            blobs.forEach(([blob, name]) => {
-                zip.file(name, blob)
-            })
-            download(await zip.generateAsync({ type: 'blob' }))
-            // this.setAttributes({disabled: false})
-        }
-
-    </script>
+    </script> -->
 </body>
-
 </html>
